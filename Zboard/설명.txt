@@ -1,0 +1,112 @@
+1. 컨트롤러 : 사용자와 입출력하는 클래스 
+- @Controller
+	ModelAndView - Model + View <-> form submit
+	ReponseEntity - Model + 상태코드 <-> $.ajax()
+-@RestController : ModelAndView 리턴 못함
+
+1-1 입력값을 꺼내는 어노테이션 
+	-> ?irum=spring&nai=20에서 
+	@RequestParam : 요청에서 값을 하나 꺼내서 변수에 담는다. 
+	@ModelAttribute : 요청을 객체(command 객체, dto)에 담는다. 
+	
+	@PathVariable : 주소가 일부가 요청 
+	/board/{pageno} -> /board/0
+
+1-2 검증 어노테이션 
+- @Validated : 검증을 켠다. 
+- @Valid : 커맨드 객체를 검증. 바로 뒤에 BindingResult가 와야 한다. 
+
+1-3 오류 처리 @ExceptionHandler
+
+
+----------------------------------------------------
+1. 자바의 예외처리
+	- Exception : 프로그래머가 대처할 수 있는 가벼운 오류 
+		Error : 심각한 오류 
+	- 자바의 함수들은 발생할 수 있는 예외까지 정해져있다. -> 가급적 try ~ catch하자
+	- 예외를 처리하는 경우 : try {} catch{}
+	- 예외를 처리하지 않는 경우 : throws 예외 객체
+	
+	
+2. 스프링의 예외처리
+	-@ExceptionHandler라는 예외전담 컨트롤러가 있다. 
+	- 예외는 가급적 throws해야 한다. 
+	- 즉, 스프링의 경우에는 예외를 개발자가 처리하는 것이 아니라 @ExceptionHandler이 해준다. 
+	
+	- 예외가 발생하면 나중에 @ExceptionHandler로 잡으면 된다. 
+
+3. 필터 
+	- Filter는 컨트롤러 앞에서 실행되는 클래스
+	- 스프링 시큐리티는 인증작업을 잘게 쪼개서 10개의 필터로 작업을 수행 
+		필터들이 줄을 서있다 -> 필터체인이라고 함 
+		 -> SecurityFilterChain
+		
+4. 스프링 빈 생성 어노테이션
+	- @Bean
+	- @Component <- @Controller, @Service, @Repository
+	- @Configuration : 스프링 설정 빈
+	- @Mapper : 마이바티스가 인터페이스를 스프링에 dao로 등록한다. 
+	
+5.1 스프링 시큐리티
+	- 인증 : 로그인 @PreAuthrize + isAnoymous(), isAuthenticated()
+	- 인가 : 권한 @Secured("ROLE_권한이름")
+	- CSRF : jsp 파일의 위변조를 잡아내겠다.
+		GET 방식으로 요청할 때 서버가 csrf 토큰을 같이 보낸다.
+		post 방식으로 요청할  때 csrf를 서버로 재전송하면 서버가 확인한다. 
+		
+5.2 스프링 시큐리티 태그 라이브러리 
+	- <sec:authorize access=""> 태그를 이용해 인증과 인가
+	 	<sec:authorize access="isAnonymous()">			비로그인
+	 	<sec:authorize access="isAuthenticated()">		로그인
+	 	<sec:authorize access="hasRole('권한이름')">		권한 체크
+	 	
+	- <sec:authorize property="name">으로 로그인 아이디를 가져올 수 있다. 
+		property="" 안에 권한을 넣으면 권한을 가져올 수 있다. 
+
+5.3 부가 클래스들 
+	- 403 오류 처리 : 
+		AccessDeniedHandler 인터페이스 구현
+	- 로그인 실패했을 때 처리할 작업이 있다면 : 
+		SimpleUrlAuthenticationFailureHandler 클래스 상속
+	- 로그인 성공했을 때 처리할 작업이 있다면 : 
+		SimpleUrlAuthenticationSuccessHandler 클래스 상속 	
+
+
+6. request, response 객체 
+	- header : 편지봉투에 해당(요청방식, 한글 인코딩, 보내고 받는 url....)
+	- body : 실제 데이터 
+		
+7.  페이징 쿼리 
+	- 정렬없이 정렬효과를 내려면 index 힌트, index_desc 힌트를 사용한다. 
+	힌트는 오라클에서 이렇게 쿼리를 처리하라고 안내하는 것 
+	select /*+ index(테이블이름 인덱스이름) ~*/
+	select /*+ index_desc(테이블이름 인덱스이름) ~*/
+- CDATA <-> PCDATA
+	xml 파일에서 "이부분은 xml이 아니니까 xm 문법에 맞는 지 확인할 필요 없어"라고 알려준다. 
+	
+8. selectKey(대표적인 사용예는 시퀀스)
+- dao에 시퀀스를 이용해 insert하는 쿼리
+	insert into board values(board_seq.nextval, #{title}.....)
+	위처럼 작성하면 생성된 시퀀스값은 dao내부에서 사용되고 사라진다. 
+- 그런데 만약 service, controller에서 시퀀스값이 필요하다면? selectKey
+	service에서 
+		public Board save(Board board){
+			// 현재 board의 bno는 null
+			boardDao.save(board);
+			// dao는 생성한 시퀀스를 board에 저장 
+			
+			system.out.println(board.getBno());
+		}
+
+9. List, Map, Set....이런 애들의 부모 인터페이스 -> Collection
+	자바에서 집합을 다루는 기법들을 Collection API
+	Collection을 흐름(stream)처럼 다루는 방법이 Stream API
+
+Tag Library : jsp에서 자바 함수를 태그처럼 사용할 수 있는 기술 
+	- JSTL : if문, for문 
+	- Spring Security Tag Library : 로그인 여부, 로그인 아이디, 권한 체크
+	
+jsp : html과 java를 섞어서 사용한다. 
+	<c:if>
+	<sec:authorize>
+	

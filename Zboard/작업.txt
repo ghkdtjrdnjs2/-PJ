@@ -1,0 +1,23 @@
+1. 관리자로 c##spring 사용자 생성
+
+2. c##spring으로 테이블, 키, 시퀀스, 인덱스 생성
+
+3. 프로젝트 생성 -lombok, devtool, oracle, mybatis, validation,
+				java mail sender, spirc security, spring web
+		
+4. application.properties를 비롯한 설정
+
+5. member에 대한 작업들 설계 
+
+6. 엔티티 작성 
+
+7. MemberDao 작성
+
+8. MemberDao 테스트 수행
+
+9. 스프링시큐리티 설정 
+	- SecurityConfig
+	- UserDetailsService : dao에서 사용자 정보를 읽어와 리턴하는 클래스 
+	- MyAccessDenialHanler : 403오류 처리
+	- LoginFailureHandler : 로그인 실패 처리 
+	

@@ -1,0 +1,47 @@
+################################### JOB LIST ###################################
+
+Member-001. 아이디 사용여부 확인(GET /member/id-check)
+						요청 파라미터 : username
+						응답 : ResponseEntity
+						- Boolean memberDao.existsByUsername(String username);
+
+-- 파일 업로드는 MultipartFile로 하면 된다.
+Member-002.	회원 가입(POST /member/join)
+						요청 파라미터 : username, password, email, birthday, profile(MultipartFile)
+						응답 : ModelAndView
+						- Boolean memberDao.save(Member member);
+
+-- ResponseEntity 이동하지 않겠다. 
+Member-003. 아이디 찾기(GET /member/find-username
+						요청 파라미터 : email
+						응답 : ResponseEntity
+						- String memberDao.findUsernameByEmail(String email);
+
+Member-004. 비밀번호 리셋(POST /member/reset-password
+						요청 파라미터 : username
+						응답 : ResponseEntity
+						- Long memberDao.changePassword(String password, String username);
+
+Member-005. 비밀번호 확인(GET /member/check-password)
+						요청 파라미터 : password
+						응답 : ModelAndView
+						- Member memberDao.findByUsername(String username);
+							비밀번호는 암호화되어 있어 스프링시큐리티의 PasswordEncoder.match() 메소드로 비교해야 한다
+
+Member-006. 내정보보기(GET /member/read)
+						요청 파라미터 : X
+						응답 : ModelAndView
+						- Member memberDao.findByUsername(String username);
+
+Member-007. 이메일 변경(POST /member/change-email)
+						요청 파라미터 : 새로운 email
+						응답 : ResponseEntity
+						- Long memberDao.changeEmail(String email, String username);
+						
+Member-008. 회원 탈퇴(POST /member/quit)
+						요청 파라미터 : X
+						응답 : ModelAndView
+						- Member memberDao.deleteByUsername(String username);
+						
+Member-009. 로그인 - 스프링 시큐리티
+						- Member memberDao.findByUsername(String username);

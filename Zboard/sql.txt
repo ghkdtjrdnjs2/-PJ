@@ -1,0 +1,66 @@
+-- 1. 관리자 작업 
+-- 사용자 생성  : c##으로 시작한다(오라클 12부터)
+create user c##spring identified by 1234;
+
+-- 사용자에게 작업공간과 쿼터(tablespace)
+alter user c##spring default tablespace users
+quota 100m on users;
+
+-- 작업권한 부여(view 만들 수 있는 권한 등)
+grant create view, connect, resource to c##spring;
+
+-- 2. c##spring 작업
+-- table, sequence, index drop
+-- sql은 먼저 드랍을 하고 시작한다. 
+drop table member;
+drop table board;
+drop table comments;
+drop table member_board;
+
+drop sequence board_seq;
+drop sequence comments_seq;
+drop index comments_idx_bno;
+
+create table member (
+	username varchar2(10 char),
+	password varchar2(60 char),
+	email varchar2(30 char),
+	birthday date,
+	joinday date default sysdate,
+	profile varchar2(50 char),
+	role varchar2(10 char)
+);
+
+-- 데이터베이스는 _를 사용한다.
+create table board (
+	bno number(6),
+	title varchar2(50 char),
+	content clob,
+	writer varchar2(10 char),
+	write_time date default sysdate,
+	read_cnt number(6) default 0,
+	good_cnt number(6) default 0,
+	bad_cnt number(6) default 0
+);
+
+create table comments (
+	cno number(6),
+	content varchar2(100 char),
+	writer varchar2(10 char),
+	write_time date default sysdate,
+	bno number(6)
+);
+
+create table member_board (
+	username varchar2(10 char),
+	bno number(6)
+);
+
+alter table member add constraints member_pk_username primary key(username);
+alter table board add constraints board_pk_bno primary key(bno);
+alter table comments add constraints comments_pk_cno primary key(cno);
+alter table member_board add constraints member_board_pk primary key(username, bno);
+
+create sequence board_seq;
+create sequence comments_seq;
+create index comments_idx_bno on comments(bno);

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+    <script>
+        const value1 = 'spring';
+        const value2 = 'Spring';
+
+        // value는 소문자와 숫자만 가능하다고 해보자
+        // 글자의 길이를 지정하려면 {최소길이, 최대길이}
+        const regExp=/[a-z0-9]{6,10}/;
+        console.log(regExp.test(value1));
+
+        // 대문자 S때문에 검증 실패
+        console.log(regExp.test(value2));   
+    </script>
+</body>
+</html>
